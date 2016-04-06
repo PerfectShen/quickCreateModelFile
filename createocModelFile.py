@@ -11,8 +11,7 @@
 
 
 
-import sys, getopt ,os , time
-
+import sys, getopt ,os , time , getpass
 
 
 
@@ -34,18 +33,23 @@ def openInputFile(fileName,ofileName) :
 	print list
 	fo.close()
 	
-	
-	outfileName = ofileName + ".h"
+	'''
+	创建.h文件
+	'''
+	outfileName = "%s.h" % ofileName
 	foc = open(outfileName,"wb+")
 	
 # 	foc.write("//create by wangshen\n")
 # 	foc.write
 # 	foc.write("shuxing")
+
+
 	localTime =  time.localtime(time.time())
-	print localTime.tm_mday
 # 	dateString = chr(localTime.tm_mday) + "/" + chr(localTime.tm_mon) + "/" + chr(localTime.tm_year)
 	dateString = "%d/%d/%d" % (localTime.tm_mday,localTime.tm_mon,localTime.tm_year)
-	ocString = "//\n//  %s .h\n//\n//\n//  Created by wangshen on %s.\n//  Copyright © 2015年 wangshen. All rights reserved.\n//" % (outfileName , dateString)
+	yearStr = "%d" % localTime.tm_year
+	userName = getpass.getuser()
+	ocString = "//\n//  %s.h\n//\n//\n//  Created by %s on %s.\n//  Copyright © %s年 %s. All rights reserved.\n//" % (ofileName,userName , dateString,yearStr,userName)
 	ocString = ocString + "\n\n\n#import <Foundation/Foundation.h>"
 	ocString = ocString + "\n\n@interface %s : NSObject\n\n" % ofileName
 	
@@ -59,7 +63,19 @@ def openInputFile(fileName,ofileName) :
 	foc.write(ocString)
 	foc.close()
 	
+	'''
+	创建.m文件
+	'''
 
+	outfileName = ofileName + ".m"
+	fom = open(outfileName,"wb+")
+	ocmString = "//\n//  %s.m\n//\n//\n//  Created by %s on %s.\n//  Copyright © %s年 %s. All rights reserved.\n//" % (ofileName,userName,dateString,yearStr,userName)
+	ocmString = ocmString + "\n#import \"%s.h\"" % ofileName
+	ocmString = ocmString + "\n\n\n@implementation %s" % ofileName
+	ocmString = ocmString + "\n\n\n\n\n\n\n\n@end"
+
+	fom.write(ocmString)
+	fom.close()
 	
 	
 
