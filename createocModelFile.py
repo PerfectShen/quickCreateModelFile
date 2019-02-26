@@ -9,10 +9,38 @@
 #首先 需要接受 命令行中传进来的 文件  （存放的是 模型对应的json数组）
 
 
+# ("[a-zA-Z_0-9]+":"?[a-zA-Z_0-9]*"?,\s*[//]?[^"]*)
+
+import sys, getopt ,os , time , getpass, re
 
 
-import sys, getopt ,os , time , getpass
+def createValidJson(string) :
 
+	itemlist = re.findall( r'("[a-zA-Z_0-9]+":\s*"?[^",]*"?,\s*[//]?[^"]*)', string, re.M|re.I)
+	if itemlist:
+	    print "searchObj : ", itemlist
+	else:
+		print "没有匹配到注释"
+	reslutList = []
+	for itemString in itemlist :
+		resultString = re.sub(r',\s*[//]?[^"]*',"",itemString)
+		keylist = re.findall(r'"([a-zA-Z_0-9]+)":',resultString,re.M|re.I)
+		keyString = "defautlKey"
+		if keylist:
+			keyString = keylist[0]
+		else:
+			print "未找到 key in :", resultString
+		valueType = 0
+		valueList = re.findall(r':\s*"([\s\S]*)"',resultString,re.M|re.I)
+		if valueList:
+			valueType = 0
+		else:
+			valueType = 1
+		resultDic = {'key':keyString,'type':valueType}
+		reslutList.append(resultDic)
+	print "拼接出来的 key type数组 ：", reslutList;
+	print "拼接出来的数组个数 : %d" % len(reslutList);
+	return reslutList
 
 
 
@@ -24,13 +52,11 @@ def openInputFile(fileName,ofileName) :
 	string =  fo.read()
 	print "输入的文件中的 字符串 ：", string
 	
-	string = string.replace("=",":")
-	print string
-	dic = eval(string)
-	print dic
 	
-	list =  dic.keys()
-	print list
+
+	# string = string.replace("=",":")
+	# print string
+	keyList = createValidJson(string);
 	fo.close()
 	
 	'''
@@ -53,9 +79,16 @@ def openInputFile(fileName,ofileName) :
 	ocString = ocString + "\n\n\n#import <Foundation/Foundation.h>"
 	ocString = ocString + "\n\n@interface %s : NSObject\n\n" % ofileName
 	
-	apString = "\n@property (nonatomic,copy) NSString *"
-	for pname in list :
-		ocString = ocString + apString + pname + "\n"
+	apString = "\n@property (nonatomic, copy) NSString *"
+	anumString = "\n@property (nonatomic, strong) NSNumber *"
+	for itemDic in keyList :
+		atype = itemDic['type']
+		pname = itemDic['key']
+		if atype == 1:
+			ocString = ocString + anumString + pname + "\n"
+		else:
+			ocString = ocString + apString + pname + "\n"
+
 		
 	ocString = ocString + "\n\n@end"
 # 	ocString = ocString + ""

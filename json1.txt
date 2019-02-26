@@ -1,0 +1,24 @@
+ { 
+ 
+              "userpic":"","userid":1184567, //用户ID
+             "username":""//用户昵称
+             "title":"",//标题
+             "videoid":1,//小视频id
+             "videoUrl":"",//小视频url
+             "videoCover":"",//小视频封面地址
+             "dynamicCover":"",//小视频动图封面地址
+             "time":13,//小视频长度
+             "livestatus":0, //直播状态 1 直播中，0直播结束
+             "roomid": 10008, //roomid
+             "city":杭州,//城市
+             "onlinestatus":0,//0-不在线 1-在线
+             "praisecount":3000,//点赞数
+             "commentcount":150,//评论数
+             "sharecount":200,//分享数
+             "giftcount":500,//礼物数
+             "sourceaudiouserid":118475,//音乐来源人ID
+             "sourceaudiouserpic":"",//音乐来源人头像
+             "audioid":1145, //音乐ID
+             "ispraise":1 ,//是否点赞 0没有 1已点赞
+ 
+       }
