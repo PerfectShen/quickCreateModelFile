@@ -16,9 +16,9 @@ import sys, getopt ,os , time , getpass, re
 
 def createValidJson(string) :
 
-	itemlist = re.findall( r'("[a-zA-Z_0-9]+":\s*"?[^",]*"?,\s*[//]?[^"]*)', string, re.M|re.I)
+	itemlist = re.findall( r'("[a-zA-Z_0-9]+":\s*"?[^",]*"?,\s*[//]?[^"}]*)', string, re.M|re.I)
 	if itemlist:
-	    print "searchObj : ", itemlist
+	    print "searchObj count = : %d" % len(itemlist)
 	else:
 		print "没有匹配到注释"
 	reslutList = []
@@ -30,13 +30,21 @@ def createValidJson(string) :
 			keyString = keylist[0]
 		else:
 			print "未找到 key in :", resultString
+
 		valueType = 0
 		valueList = re.findall(r':\s*"([\s\S]*)"',resultString,re.M|re.I)
 		if valueList:
 			valueType = 0
 		else:
 			valueType = 1
-		resultDic = {'key':keyString,'type':valueType}
+
+		noteList = re.findall(r',\s*//?([^"]*)',itemString,re.M|re.I);
+		noteString = ''
+		if noteList:
+			firstString = noteList[0]
+			noteString = firstString.strip()
+
+		resultDic = {'key':keyString,'type':valueType,'note':noteString}
 		reslutList.append(resultDic)
 	print "拼接出来的 key type数组 ：", reslutList;
 	print "拼接出来的数组个数 : %d" % len(reslutList);
@@ -84,6 +92,10 @@ def openInputFile(fileName,ofileName) :
 	for itemDic in keyList :
 		atype = itemDic['type']
 		pname = itemDic['key']
+		note = itemDic['note']
+		if len(note) > 0:
+			ocString = ocString + "\n//" + note
+
 		if atype == 1:
 			ocString = ocString + anumString + pname + "\n"
 		else:
